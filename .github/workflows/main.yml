@@ -1,0 +1,43 @@
+name: CI CD for api-example
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+      - 'releases/**'
+      - 'feature/**'
+  pull_request:
+    branches:
+      - master
+      - develop
+
+jobs:
+  test:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js 14.17.0
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14.17.0
+      - run: npm ci
+      - run: npm run test:cov
+
+  build:
+    needs: ['test']
+    runs-on: ubuntu-20.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v2
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+      - name: Build and Push to Docker Hub
+        run: |
+          echo "Start Build Docker Image"
+          docker build -f ./docker/app/Dockerfile.prod -t 20160190/api-example .
+          docker push 20160190/api-example
