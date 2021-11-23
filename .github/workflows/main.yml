@@ -37,7 +37,10 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
       - name: Build and Push to Docker Hub
+        env:
+          IMAGE_TAG: ${{ github.sha }}
+          DOCKER_REPOSITORY: 20160190/api-example
         run: |
           echo "Start Build Docker Image"
-          docker build -f ./docker/app/Dockerfile.prod -t 20160190/api-example .
-          docker push 20160190/api-example
+          docker build -f ./docker/app/Dockerfile.prod -t ${DOCKER_REPOSITORY}:${IMAGE_TAG} .
+          docker push ${DOCKER_REPOSITORY}:${IMAGE_TAG}
