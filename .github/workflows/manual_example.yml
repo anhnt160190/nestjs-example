@@ -1,0 +1,12 @@
+name: Example manual trigger job
+
+on: workflow_dispatch
+
+jobs:
+  manual_example:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Shell
+        run: |
+          echo "Hello World"
+          echo "end...."
