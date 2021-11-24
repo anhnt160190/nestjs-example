@@ -28,3 +28,10 @@ jobs:
           echo "Test"
           echo $GITHUB_SHA
           ls
+      - name: Set up Kube Config
+        run: |
+          mkdir ~/.kube
+          echo ${{secrets.KUBE_CONFIG}} | base64 -d > ~/.kube/config
+          
+
+      
