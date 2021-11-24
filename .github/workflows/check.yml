@@ -32,5 +32,4 @@ jobs:
         env:
           PA: ${{ secrets.PACKAGE_JSON_BASE64 }}
         run: |
-          mkdir ~/.kube
           cluster version --client
