@@ -34,5 +34,4 @@ jobs:
         run: |
           kubectl version --client
           mkdir ~/.kube
-          echo $PA | base64 -d > ~/.kube/draft
-          cat ~/.kube/draft
+          echo $PA
