@@ -32,4 +32,4 @@ jobs:
         env:
           PA: ${{ secrets.PACKAGE_JSON_BASE64 }}
         run: |
-          cluster version --client
+          kubectl version --client
