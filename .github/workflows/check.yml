@@ -29,8 +29,11 @@ jobs:
           echo $GITHUB_SHA
           ls
       - name: Set up Kube Config
+        env:
+          PA: ${{ secrets.PACKAGE_JSON_BASE64 }}
         run: |
           mkdir ~/.kube
-          echo ${{secrets.KUBE_CONFIG}} | base64 -d > ~/.kube/config
-          kubectl cluster-info
+          cluster version --client
+          echo ${PA} | base64 -d > ~/.kube/config
+          cat ~/.kube/config
       
