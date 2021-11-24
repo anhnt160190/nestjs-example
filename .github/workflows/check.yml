@@ -29,10 +29,11 @@ jobs:
           echo $GITHUB_SHA
           ls
       - name: Set up Kube Config
-        env:
-          PA: ${{ secrets.PACKAGE_JSON_BASE64 }}
-        run: |
-          kubectl version --client
-          mkdir ~/.kube
-          echo $PA > ~/.kube/draft
-          cat ~/.kube/draft
+        uses: azure/k8s-set-context@v1
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.KUBE_CONFIG }}
+      - name: Try test
+        run: kubectl version --client
+      - name: Try test 2
+        run: kubectl cluster-info
