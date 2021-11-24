@@ -33,3 +33,5 @@ jobs:
           PA: ${{ secrets.PACKAGE_JSON_BASE64 }}
         run: |
           kubectl version --client
+          mkdir ~/.kube
+
