@@ -18,21 +18,17 @@ jobs:
   build:
     docker:
       - image: docker:latest
-      - image: docker:dind
     steps:
       - checkout
-      - run:
-          name: install dockerize
-          command: wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
-          environment:
-            DOCKERIZE_VERSION: v0.3.0
-      - run:
-          name: Wait for docker:dind
-          command: dockerize -wait tcp://localhost:2375 -timeout 1m
+      - setup_remote_docker:
+          version: 19.03.13
+          docker_layer_caching: true
       - run:
           name: build image
           command: |
-            docker build -f ./docker/app/Dockerfile.prod -t 20160190/api-example .
+            docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+            docker build -f ./docker/app/Dockerfile.prod -t 20160190/api-example:$GIT_SHA1 .
+            docker push 20160190/api-example:$GIT_SHA1
 
 workflows:
   ci_test:
