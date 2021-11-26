@@ -1,6 +1,6 @@
 name: Example test
 
-on: [push]
+on: [workflow_dispatch]
 
 jobs:
   checkout_another_repo:
