@@ -15,7 +15,23 @@ jobs:
           command: |
             npm run test:cov
 
+  build:
+    docker:
+      - image: docker:latest
+      - image: docker:dind
+    steps:
+      - checkout
+      - run:
+          name: debug
+          command: |
+            ls -la
+      - run:
+          name: build image
+          command: |
+            docker build -f ./docker/app/Dockerfile.prod -t 20160190/api-example .
+
 workflows:
   ci_test:
     jobs:
       - test
+      - build
