@@ -26,10 +26,10 @@ jobs:
       - run:
           name: build image
           command: |
-            echo $GIT_SHA1
+            echo $CIRCLE_SHA1
             docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-            docker build -f ./docker/app/Dockerfile.prod -t 20160190/api-example .
-            docker push 20160190/api-example
+            docker build -f ./docker/app/Dockerfile.prod -t 20160190/api-example:$CIRCLE_SHA1 .
+            docker push 20160190/api-example:$CIRCLE_SHA1
 
 workflows:
   ci_test:
