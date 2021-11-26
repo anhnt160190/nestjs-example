@@ -13,3 +13,8 @@ jobs:
           name: Test coverage
           command: |
             npm run test:cov
+
+workflows:
+  ci_test:
+    jobs:
+      - test
