@@ -1,16 +1,17 @@
 name: CI CD for api-example
 
 on:
-  push:
-    branches:
-      - master
-      - develop
-      - 'releases/**'
-      - 'feature/**'
-  pull_request:
-    branches:
-      - master
-      - develop
+  workflow_dispatch
+  # push:
+  #   branches:
+  #     - master
+  #     - develop
+  #     - 'releases/**'
+  #     - 'feature/**'
+  # pull_request:
+  #   branches:
+  #     - master
+  #     - develop
 
 jobs:
   test:
