@@ -62,6 +62,7 @@ jobs:
       - run:
           name: set up kube config
           command: |
+            mkdir ~/.kube
             echo $KUBE_CONFIG | base64 -d > ~/.kube/config
             kubectl cluster-info
 
