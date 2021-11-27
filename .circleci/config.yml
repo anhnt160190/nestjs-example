@@ -24,13 +24,13 @@ workflows:
       - test
       - aws-ecr/build-and-push-image:
           repo: "hugo-test"
-          tag: "$CIRCLE_SHA1"
-          aws-access-key-id: "$AWS_ACCESS_KEY_ID"
-          aws-secret-access-key: "$AWS_SECRET_ACCESS_KEY"
+          tag: "${CIRCLE_SHA1}"
+          aws-access-key-id: "${AWS_ACCESS_KEY_ID}"
+          aws-secret-access-key: "${AWS_SECRET_ACCESS_KEY}"
           create-repo: true
           context: .
           dockerfile: "Dockerfile.prod"
           path: "docker/app"
-          region: $AWS_REGION
+          region: "${AWS_REGION}"
           requires:
             - test
