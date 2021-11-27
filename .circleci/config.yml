@@ -36,7 +36,7 @@ jobs:
       - run:
           name: Build and Push Docker Image
           command: |
-            docker build -f ./docker/app/Dockerfile.prod -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/hugo-test:$CIRCLE_SHA1
+            docker build -f ./docker/app/Dockerfile.prod -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/hugo-test:$CIRCLE_SHA1 .
             docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/hugo-test:$CIRCLE_SHA1
 
 workflows:
