@@ -61,10 +61,12 @@ jobs:
             sudo mv aws-iam-authenticator /usr/local/bin/
             sudo wget -q https://github.com/viaduct-ai/kustomize-sops/releases/download/v3.0.1/ksops_3.0.1_Linux_x86_64.tar.gz
             tar -zxvf ksops_3.0.1_Linux_x86_64.tar.gz
-            sudo wget -q https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/3.10.0/kustomize_3.10.0_linux_amd64.tar.gz
-            tar -xzvf kustomize_3.10.0_linux_amd64.tar.gz
+            chmod +x ./ksops
+            sudo mv ksops /usr/local/bin/
+            sudo wget -q https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv4.4.1/kustomize_v4.4.1_linux_amd64.tar.gz
+            tar -xzvf kustomize_v4.4.1_linux_amd64
+            chmod +x ./kustomize
             sudo mv kustomize /usr/local/bin/
-            sudo chmod +x /usr/local/bin/kustomize
             kustomize --help
       - run:
           name: debug
