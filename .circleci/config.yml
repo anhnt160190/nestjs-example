@@ -77,7 +77,7 @@ jobs:
           command: |
             export XDG_CONFIG_HOME=$HOME/.config
             cd deployment
-            kustomize --help
+            kustomize build --help
             
 
 workflows:
