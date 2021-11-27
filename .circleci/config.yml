@@ -62,8 +62,6 @@ jobs:
             sudo wget -q https://github.com/viaduct-ai/kustomize-sops/releases/download/v3.0.1/ksops_3.0.1_Linux_x86_64.tar.gz
             tar -zxvf ksops_3.0.1_Linux_x86_64.tar.gz
             sudo mv ksops /usr/local/bin/
-            sudo chmod +x /usr/local/bin/ksops
-            export KUSTOMIZE_VERSION="v3.10.0"
             sudo wget -q https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/3.10.0/kustomize_3.10.0_linux_amd64.tar.gz
             tar -xzvf kustomize_3.10.0_linux_amd64.tar.gz
             sudo mv kustomize /usr/local/bin/
