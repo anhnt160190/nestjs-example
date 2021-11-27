@@ -22,7 +22,7 @@ workflows:
   ci_test:
     jobs:
       - test
-      - aws-ecr/build-and-push-ecr:
+      - aws-ecr/build-and-push-image:
           repo: hugo-test
           tag: $CIRCLE_SHA1
           aws-access-key-id: $AWS_ACCESS_KEY_ID
