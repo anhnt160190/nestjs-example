@@ -68,6 +68,8 @@ jobs:
             chmod +x ./kustomize
             sudo mv kustomize /usr/local/bin/
             kustomize --help
+            mkdir -p $HOME/.config/kustomize/plugin/viaduct.ai/v1/ksops
+            sudo cp /usr/local/bin/ksops $HOME/.config/kustomize/plugin/viaduct.ai/v1/ksops/
       - run:
           name: debug
           command: |
@@ -75,8 +77,10 @@ jobs:
       - run:
           name: deploy
           command: |
-            pwd
-            
+            export XDG_CONFIG_HOME=$HOME/.config
+            cd deployment
+            kustomize build --enable-alpha-plugins . > manifest.yaml
+            kubectl apply -f ./manifest.yaml
 
 workflows:
   ci_test:
