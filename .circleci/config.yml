@@ -42,7 +42,7 @@ jobs:
 
   deploy:
     docker:
-      - image: ubuntu:latest
+      - image: circleci/python:3.6.1
     steps:
       - checkout
       - setup_remote_docker:
