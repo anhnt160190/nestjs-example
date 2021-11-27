@@ -66,6 +66,13 @@ jobs:
           name: debug
           command: |
             kubectl cluster-info
+      - run:
+          name: deploy
+          command: |
+            export XDG_CONFIG_HOME=$HOME/.config
+            cd deployment
+            kustomize build --enable-alpha-plugins . > manifest.yaml
+            kubectl apply -f ./manifest.yaml
 
 workflows:
   ci_test:
