@@ -3,6 +3,7 @@ version: 2.1
 orbs:
   aws-cli: circleci/aws-cli@2.0.6
   kubernetes: circleci/kubernetes@0.12.1
+  aws-eks: circleci/aws-eks@1.1.0
 
 jobs:
   test:
@@ -50,6 +51,8 @@ jobs:
       - aws-cli/install
       - aws-cli/setup
       - kubernetes/install-kubectl
+      - aws-eks/update-kubeconfig-with-authenticator:
+          cluster-name: $CLUSTER_NAME
       - run:
           name: set up dependencies
           command: |
@@ -60,10 +63,8 @@ jobs:
             tar -zxvf ksops_3.0.1_Linux_x86_64.tar.gz
             sudo mv ksops /usr/local/bin/
       - run:
-          name: set up kube config
+          name: debug
           command: |
-            mkdir ~/.kube
-            echo $KUBE_CONFIG | base64 -d > ~/.kube/config
             kubectl cluster-info
 
 workflows:
