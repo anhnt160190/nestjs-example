@@ -19,8 +19,6 @@ jobs:
             npm run test:cov
 
   build:
-    requires:
-      - test
     docker:
       - image: docker:latest
     steps:
