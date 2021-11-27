@@ -2,6 +2,7 @@ version: 2.1
 
 orbs:
   aws-cli: circleci/aws-cli@2.0.6
+  kubernetes: circleci/kubernetes@0.12.1
 
 jobs:
   test:
@@ -18,32 +19,57 @@ jobs:
           command: |
             npm run test:cov
 
-  build:
+  # build:
+  #   docker:
+  #     - image: circleci/python:3.6.1
+  #   steps:
+  #     - checkout
+  #     - setup_remote_docker:
+  #         docker_layer_caching: true
+  #     - aws-cli/install
+  #     - aws-cli/setup
+  #     - run:
+  #         name: Create ECR repo if missing
+  #         command: |
+  #           export AWS_ECR_CREATE_REPO_RESPONSE=$(aws ecr create-repository --repository-name hugo-test --image-scanning-configuration scanOnPush=true 2>&1)
+  #           echo $AWS_ECR_CREATE_REPO_RESPONSE
+  #     - run:
+  #         name: Build and Push Docker Image
+  #         command: |
+  #           docker login --username AWS --password $(aws ecr get-login-password --region $AWS_DEFAULT_REGION) $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+  #           docker build -f ./docker/app/Dockerfile.prod -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/hugo-test:$CIRCLE_SHA1 .
+  #           docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/hugo-test:$CIRCLE_SHA1
+
+  deploy:
     docker:
-      - image: circleci/python:3.6.1
+      - image: ubuntu:latest
     steps:
       - checkout
       - setup_remote_docker:
-          version: 19.03.13
           docker_layer_caching: true
       - aws-cli/install
       - aws-cli/setup
+      - kubernetes/install-kubectl
       - run:
-          name: Create ECR repo if missing
+          name: set up dependencies
           command: |
-            export AWS_ECR_CREATE_REPO_RESPONSE=$(aws ecr create-repository --repository-name hugo-test --image-scanning-configuration scanOnPush=true 2>&1)
-            echo $AWS_ECR_CREATE_REPO_RESPONSE
+            curl -o aws-iam-authenticator https://amazon-eks.s3.us-west-2.amazonaws.com/1.21.2/2021-07-05/bin/linux/amd64/aws-iam-authenticator
+            chmod +x ./aws-iam-authenticator
+            sudo mv aws-iam-authenticator /usr/local/bin/
+            sudo wget -q https://github.com/viaduct-ai/kustomize-sops/releases/download/v3.0.1/ksops_3.0.1_Linux_x86_64.tar.gz
+            tar -zxvf ksops_3.0.1_Linux_x86_64.tar.gz
+            sudo mv ksops /usr/local/bin/
       - run:
-          name: Build and Push Docker Image
+          name: set up kube config
           command: |
-            docker login --username AWS --password $(aws ecr get-login-password --region $AWS_DEFAULT_REGION) $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
-            docker build -f ./docker/app/Dockerfile.prod -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/hugo-test:$CIRCLE_SHA1 .
-            docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/hugo-test:$CIRCLE_SHA1
+            echo $KUBE_CONFIG | base64 -d > ~/.kube/config
+            kubectl cluster-info
 
 workflows:
   ci_test:
     jobs:
-      - test
-      - build:
-          requires:
-            - test
+      # - test
+      # - build:
+      #     requires:
+      #       - test
+      - deploy
