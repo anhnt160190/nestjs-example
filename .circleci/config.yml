@@ -44,4 +44,6 @@ workflows:
   ci_test:
     jobs:
       - test
-      - build
+      - build:
+          requires:
+            - test
