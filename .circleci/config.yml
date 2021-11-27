@@ -1,5 +1,8 @@
 version: 2.1
 
+orbs:
+  aws-ecr: circleci/aws-ecr@7.3.0
+
 jobs:
   test:
     docker:
@@ -15,24 +18,19 @@ jobs:
           command: |
             npm run test:cov
 
-  build:
-    docker:
-      - image: docker:latest
-    steps:
-      - checkout
-      - setup_remote_docker:
-          version: 19.03.13
-          docker_layer_caching: true
-      - run:
-          name: build image
-          command: |
-            echo $CIRCLE_SHA1
-            docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-            docker build -f ./docker/app/Dockerfile.prod -t 20160190/api-example:$CIRCLE_SHA1 .
-            docker push 20160190/api-example:$CIRCLE_SHA1
-
 workflows:
   ci_test:
     jobs:
       - test
-      - build
+      - aws-ecr/build-and-push-ecr:
+          repo: hugo-test
+          tag: $CIRCLE_SHA1
+          aws-access-key-id: $AWS_ACCESS_KEY_ID
+          aws-secret-access-key: $AWS_SECRET_ACCESS_KEY
+          create-repo: true
+          context: .
+          dockerfile: Dockerfile.prod
+          path: "docker/app"
+          region: $AWS_REGION
+          requires:
+            - test
