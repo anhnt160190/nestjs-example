@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  aws-ecr: circleci/aws-ecr@7.3.0
+  aws-cli: circleci/aws-cli@2.0.6
 
 jobs:
   test:
@@ -18,19 +18,34 @@ jobs:
           command: |
             npm run test:cov
 
+  build:
+    requires:
+      - test
+    docker:
+      - image: docker:latest
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 19.03.13
+          docker_layer_caching: true
+      - aws-cli/install
+      - aws-cli/configure:
+          aws-access-key-id: "$AWS_ACCESS_KEY_ID"
+          aws-secret-access-key: "$AWS_SECRET_ACCESS_KEY"
+          aws-region: "$AWS_REGION"
+      - run:
+          name: Create ECR repo if missing
+          command: |
+            export AWS_ECR_CREATE_REPO_RESPONSE=$(aws ecr create-repository --repository-name hugo-test --image-scanning-configuration scanOnPush=true 2>&1)
+            echo $AWS_ECR_CREATE_REPO_RESPONSE
+      - run:
+          name: Build and Push Docker Image
+          command: |
+            docker build -f ./docker/app/Dockerfile.prod -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/hugo-test:$CIRCLE_SHA1
+            docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/hugo-test:$CIRCLE_SHA1
+
 workflows:
   ci_test:
     jobs:
       - test
-      - aws-ecr/build-and-push-image:
-          repo: "hugo-test"
-          tag: "${CIRCLE_SHA1}"
-          aws-access-key-id: "${AWS_ACCESS_KEY_ID}"
-          aws-secret-access-key: "${AWS_SECRET_ACCESS_KEY}"
-          create-repo: true
-          context: .
-          dockerfile: "Dockerfile.prod"
-          path: "docker/app"
-          region: "${AWS_REGION}"
-          requires:
-            - test
+      - build
