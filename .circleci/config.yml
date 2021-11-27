@@ -63,7 +63,7 @@ jobs:
             tar -zxvf ksops_3.0.1_Linux_x86_64.tar.gz
             sudo mv ksops /usr/local/bin/
             export KUSTOMIZE_VERSION="v3.10.0"
-            wget -q https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/${KUSTOMIZE_VERSION}/kustomize_${KUSTOMIZE_VERSION}_linux_amd64.tar.gz -O - | tar -xzO > /usr/local/bin/kustomize \
+            sudo wget -q https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/${KUSTOMIZE_VERSION}/kustomize_${KUSTOMIZE_VERSION}_linux_amd64.tar.gz -O - | tar -xzO > /usr/local/bin/kustomize \
             sudo chmod +x /usr/local/bin/kustomize
             kustomize --help
       - run:
