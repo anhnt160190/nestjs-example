@@ -27,10 +27,7 @@ jobs:
           version: 19.03.13
           docker_layer_caching: true
       - aws-cli/install
-      - aws-cli/configure:
-          aws-access-key-id: "$AWS_ACCESS_KEY_ID"
-          aws-secret-access-key: "$AWS_SECRET_ACCESS_KEY"
-          aws-region: "$AWS_REGION"
+      - aws-cli/setup
       - run:
           name: Create ECR repo if missing
           command: |
