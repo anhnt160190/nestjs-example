@@ -77,8 +77,8 @@ jobs:
           command: |
             export XDG_CONFIG_HOME=$HOME/.config
             cd deployment
-            kustomize build --enable-alpha-plugins . > manifest.yaml
-            kubectl apply -f ./manifest.yaml
+            kustomize --help
+            
 
 workflows:
   ci_test:
