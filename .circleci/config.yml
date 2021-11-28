@@ -13,34 +13,16 @@ jobs:
   test:
     docker:
       - image: circleci/node:14.17.0
-      - image: circleci/mongo:4.4
+      # - image: circleci/mongo:4.4
     steps:
       - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
       - run:
           name: MongoDB Install
           command: |
-             sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 9DA31620334BD75D9DCB49F368818C72E52529D4
-             echo "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.0.list
-             sudo apt-get update
-             sudo apt-get install -y mongodb-org-shell
-      - run:
-          name: Wait for db
-          command: dockerize -wait tcp://localhost:27017 -timeout 1m
-      - run:
-          name: Get versions
-          command: |
-              node -v
-              npm -v
-              timeout 5m ping 8.8.8.8
-      # - run:
-      #     name: Set up
-      #     command: |
-      #       npm ci
-      # - run:
-      #     name: Test coverage
-      #     command: |
-      #       docker ps
-      #       npm run test:cov
+            docker run -it -p 27017:27017 -d mongo
+            docker ps
 
   # build:
   #   docker:
