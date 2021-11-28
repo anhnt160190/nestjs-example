@@ -31,8 +31,7 @@ jobs:
           command: |
               node -v
               npm -v
-              mongo -v
-              mongo localhost --eval "db.version()"
+              timeout 5m ping 8.8.8.8
       # - run:
       #     name: Set up
       #     command: |
