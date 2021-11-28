@@ -5,32 +5,43 @@ orbs:
   kubernetes: circleci/kubernetes@0.12.1
   aws-eks: circleci/aws-eks@1.1.0
 
+machine:
+  services:
+    - mongodb
+
 jobs:
   test:
     docker:
       - image: circleci/node:14.17.0
-      - image: circleci/mongo:4.0-bionic
+      - image: circleci/mongo:4.4
     steps:
       - checkout
-      - setup_remote_docker:
-          docker_layer_caching: true
       - run:
-          name: install dockerize
-          command: wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
-          environment:
-            DOCKERIZE_VERSION: v0.3.0
+          name: MongoDB Install
+          command: |
+             sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 9DA31620334BD75D9DCB49F368818C72E52529D4
+             echo "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.0.list
+             sudo apt-get update
+             sudo apt-get install -y mongodb-org-shell
       - run:
           name: Wait for db
           command: dockerize -wait tcp://localhost:27017 -timeout 1m
       - run:
-          name: Set up
+          name: Get versions
           command: |
-            npm ci
-      - run:
-          name: Test coverage
-          command: |
-            docker ps
-            npm run test:cov
+              node -v
+              npm -v
+              mongo -v
+              mongo localhost --eval "db.version()"
+      # - run:
+      #     name: Set up
+      #     command: |
+      #       npm ci
+      # - run:
+      #     name: Test coverage
+      #     command: |
+      #       docker ps
+      #       npm run test:cov
 
   # build:
   #   docker:
