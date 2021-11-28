@@ -12,6 +12,8 @@ jobs:
       - image: circleci/mongo:4.0-bionic
     steps:
       - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
       - run:
           name: install dockerize
           command: wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
@@ -27,6 +29,7 @@ jobs:
       - run:
           name: Test coverage
           command: |
+            docker ps
             npm run test:cov
 
   # build:
