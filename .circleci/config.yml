@@ -19,13 +19,13 @@ jobs:
 
   build:
     docker:
-      - image: circleci/python:3.6.1
+      - image: docker
     steps:
       - checkout
       - setup_remote_docker:
           docker_layer_caching: true
-      - aws-cli/install
-      - aws-cli/setup
+      # - aws-cli/install
+      # - aws-cli/setup
       - run:
           name: test
           command: |
