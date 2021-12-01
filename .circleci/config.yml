@@ -17,26 +17,26 @@ jobs:
             npm install
             npm run test:cov
 
-  # build:
-  #   docker:
-  #     - image: circleci/python:3.6.1
-  #   steps:
-  #     - checkout
-  #     - setup_remote_docker:
-  #         docker_layer_caching: true
-  #     - aws-cli/install
-  #     - aws-cli/setup
-  #     - run:
-  #         name: Create ECR repo if missing
-  #         command: |
-  #           export AWS_ECR_CREATE_REPO_RESPONSE=$(aws ecr create-repository --repository-name hugo-test --image-scanning-configuration scanOnPush=true 2>&1)
-  #           echo $AWS_ECR_CREATE_REPO_RESPONSE
-  #     - run:
-  #         name: Build and Push Docker Image
-  #         command: |
-  #           docker login --username AWS --password $(aws ecr get-login-password --region $AWS_DEFAULT_REGION) $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
-  #           docker build -f ./docker/app/Dockerfile.prod -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/hugo-test:$CIRCLE_SHA1 .
-  #           docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/hugo-test:$CIRCLE_SHA1
+  build:
+    docker:
+      - image: circleci/python:3.6.1
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - aws-cli/install
+      - aws-cli/setup
+      - run:
+          name: Create ECR repo if missing
+          command: |
+            export AWS_ECR_CREATE_REPO_RESPONSE=$(aws ecr create-repository --repository-name hugo-test --image-scanning-configuration scanOnPush=true 2>&1)
+            echo $AWS_ECR_CREATE_REPO_RESPONSE
+      - run:
+          name: Build and Push Docker Image
+          command: |
+            docker login --username AWS --password $(aws ecr get-login-password --region $AWS_DEFAULT_REGION) $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+            docker build -f ./docker/app/Dockerfile.prod -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/hugo-test:$CIRCLE_SHA1 .
+            docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/hugo-test:$CIRCLE_SHA1
 
   # deploy:
   #   docker:
@@ -83,7 +83,7 @@ workflows:
   ci_test:
     jobs:
       - test
-      # - build:
-      #     requires:
-      #       - test
+      - build:
+          requires:
+            - test
       # - deploy
