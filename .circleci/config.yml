@@ -27,16 +27,22 @@ jobs:
       - aws-cli/install
       - aws-cli/setup
       - run:
-          name: Create ECR repo if missing
+          name: test
           command: |
-            export AWS_ECR_CREATE_REPO_RESPONSE=$(aws ecr create-repository --repository-name hugo-test --image-scanning-configuration scanOnPush=true 2>&1)
-            echo $AWS_ECR_CREATE_REPO_RESPONSE
-      - run:
-          name: Build and Push Docker Image
-          command: |
-            docker login --username AWS --password $(aws ecr get-login-password --region $AWS_DEFAULT_REGION) $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
-            docker build -f ./docker/app/Dockerfile.prod -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/hugo-test:$CIRCLE_SHA1 .
-            docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/hugo-test:$CIRCLE_SHA1
+            docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+            docker build -f ./docker/app/Dockerfile.prod -t 20160190/api-example .
+            docker push 20160190/api-example
+      # - run:
+      #     name: Create ECR repo if missing
+      #     command: |
+      #       export AWS_ECR_CREATE_REPO_RESPONSE=$(aws ecr create-repository --repository-name hugo-test --image-scanning-configuration scanOnPush=true 2>&1)
+      #       echo $AWS_ECR_CREATE_REPO_RESPONSE
+      # - run:
+      #     name: Build and Push Docker Image
+      #     command: |
+      #       docker login --username AWS --password $(aws ecr get-login-password --region $AWS_DEFAULT_REGION) $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+      #       docker build -f ./docker/app/Dockerfile.prod -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/hugo-test:$CIRCLE_SHA1 .
+      #       docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/hugo-test:$CIRCLE_SHA1
 
   # deploy:
   #   docker:
